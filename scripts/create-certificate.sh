@@ -1,6 +1,7 @@
 #!/bin/bash
-echo $1 
-PRIV=$1
+echo "Creating a $1 Certificate"
+FUNC=$1 
+PRIV=$2
 echo $PRIV
 dir=$PWD/$PRIV-ssl
 create_ssl_cnf (){
@@ -179,7 +180,7 @@ create_certificate()
 	    -out $PRIV-ssl/certs/$PRIV.inb.cert.pem \
 	    -subj "/C=US/ST=Massachusetts/L=Boston/O=Oracle/CN=$PRIV/"
     
-    cat > $PRIV-ssl/$PRIV.ssl-forward-proxy.json << EOF
+ cat > $PRIV-ssl/$PRIV.ssl-forward-proxy.json << EOF
 {
   "caCertOrderedList" : [
     "$(perl -pe 's/\n/\\n/' $PRIV-ssl/certs/ca.cert.pem)"
@@ -210,20 +211,29 @@ EOF
     openssl verify -CAfile $PRIV-ssl/certs/ca.cert.pem $PRIV-ssl/certs/$PRIV.fwd.cert.pem
     
 
-cd ..
 }
+if [ -z "$FUNC" ]; then
+    echo "Please provide a type of certficate (INBOUND vs FORWARD_PROXY) you would like to create"
+    exit 4;
 # Check if IP/DNS name is provided for the certificate and error out if not 
-if [ -z "$PRIV" ]; then
-    echo "Please provide IP address or DNS Name for the certificate" 
+elif [ -z "$PRIV" ]; then
+    echo "Please provide an IP address or DNS Name for the certificate" 
     exit 2;
 # Validate that certificate doesnt exist for this IP/DNS name 
 elif [[ -f $PRIV-ssl/private/$PRIV.key.pem ]]; then
 echo "Certificate exists for this IP/DNS Name"
-ls -l $PRIV-ssl/certs/$PRIV.fwd.cert.pem
-ls -l $PRIV-ssl/certs/$PRIV.inb.cert.pem
+echo "Forward proxy SSL Certificate: $PRIV-ssl/$PRIV.ssl-forward-proxy.json"
+echo "Inbound SSL Certificate:  $PRIV-ssl/$PRIV.ssl-inbound-inspection.json"
 exit 1;
 # Create Certificate workflow
-else 
+elif [[ "${FUNC,,}" == "forward" ]]; then 
 create_ssl_cnf
 create_certificate
+echo "Forward proxy SSL Certificate: $PRIV-ssl/$PRIV.ssl-forward-proxy.json"
+elif [[ "${FUNC,,}" == "inbound" ]]; then  
+create_ssl_cnf
+create_certificate  
+echo "Inbound SSL Certificate:  $PRIV-ssl/$PRIV.ssl-inbound-inspection.json"
+else
+echo "Invalid Input"
 fi
