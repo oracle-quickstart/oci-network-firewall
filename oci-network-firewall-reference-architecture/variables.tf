@@ -13,8 +13,9 @@ variable "region" {
 #  Prisma SDWAN Variable Group   #
 ####################################
 
-variable "prisma_sdwan_custom_image_ocid" {
+variable "oci_network_firewall_custom_image_ocid" {
   description = "Custom Image OCID"
+  default = "test"
 }
 
 variable branch_cidr {
@@ -87,7 +88,7 @@ variable "network_strategy" {
   default = "Create New VCN and Subnet"
 }
 
-variable "prisma_sdwan_vcn_id" {
+variable "oci_network_firewall_vcn_id" {
   default = ""
 }
 
@@ -95,19 +96,19 @@ variable "application_vcn_id" {
   default = ""
 }
 
-variable "prisma_sdwan_vcn_display_name" {
-  description = "Prisma SDWAN VCN Name"
-  default     = "prisma-sdwan-vcn"
+variable "oci_network_firewall_vcn_display_name" {
+  description = "Firewall VCN Name"
+  default     = "firewall-vcn"
 }
 
-variable "prisma_sdwan_vcn_cidr_block" {
-  description = "Prisma SDWAN VCN CIDR"
-  default     = "172.16.255.0/24"
+variable "oci_network_firewall_vcn_cidr_block" {
+  description = "OCI Network Firewall VCN CIDR"
+  default     = "10.10.0.0/16"
 }
 
-variable "prisma_sdwan_vcn_dns_label" {
-  description = "Prisma SDWAN VCN DNS Label"
-  default     = "prismasdwan"
+variable "oci_network_firewall_vcn_dns_label" {
+  description = "Firewall VCN DNS Label"
+  default     = "ocinetworkfirewall"
 }
 
 variable "subnet_span" {
@@ -115,95 +116,114 @@ variable "subnet_span" {
   default     = "Regional Subnet"
 }
 
-variable "prisma_sdwan_controller_subnet_id" {
+variable "oci_network_firewall_controller_subnet_id" {
   default = ""
 }
 
-variable "prisma_sdwan_controller_subnet_display_name" {
+variable "oci_network_firewall_controller_subnet_display_name" {
   description = "Prisma SDWAN Controller Subnet Name"
   default     = "prisma-sdwan-controller-subnet"
 }
 
-variable "prisma_sdwan_controller_subnet_cidr_block" {
+variable "oci_network_firewall_controller_subnet_cidr_block" {
   description = "Prisma SDWAN Controller Subnet CIDR"
   default     = "172.16.255.0/28"
 }
 
-variable "prisma_sdwan_controller_subnet_dns_label" {
+variable "oci_network_firewall_controller_subnet_dns_label" {
   description = "Prisma SDWAN Controller Subnet DNS Label"
   default     = "prismacontl"
 }
 
-variable "prisma_sdwan_core_subnet_id" {
+variable "oci_network_firewall_core_subnet_id" {
   default = ""
 }
 
-variable "prisma_sdwan_core_subnet_display_name" {
+variable "oci_network_firewall_core_subnet_display_name" {
   description = "Prisma SDWAN Core Subnet Name"
   default     = "prisma-sdwan-core-subnet"
 }
 
-variable "prisma_sdwan_core_subnet_cidr_block" {
+variable "oci_network_firewall_core_subnet_cidr_block" {
   description = "Prisma SDWAN Core Subnet CIDR"
   default     = "172.16.255.32/28"
 }
 
-variable "prisma_sdwan_core_subnet_dns_label" {
+variable "oci_network_firewall_core_subnet_dns_label" {
   description = "Prisma SDWAN Core Subnet DNS Label"
   default     = "prismacore"
 }
 
-variable "prisma_sdwan_public_subnet_id" {
+variable "oci_network_firewall_public_subnet_id" {
   default = ""
 }
 
-variable "prisma_sdwan_public_subnet_display_name" {
+variable "oci_network_firewall_public_subnet_display_name" {
   description = "Prisma SDWAN Public Subnet Name"
   default     = "prisma-sdwan-public-subnet"
 }
 
-variable "prisma_sdwan_public_subnet_cidr_block" {
+variable "oci_network_firewall_public_subnet_cidr_block" {
   description = "Prisma SDWAN Public Subnet CIDR"
   default     = "172.16.255.16/28"
 }
 
-variable "prisma_sdwan_public_subnet_dns_label" {
+variable "oci_network_firewall_public_subnet_dns_label" {
   description = "Prisma SDWAN Public Subnet DNS Label"
   default     = "prismapublic"
 }
 
 variable "application_vcn_cidr_block" {
   description = "Application VCN CIDR Block"
-  default     = "172.16.0.0/24"
+  default     = "10.20.0.0/16"
 }
 
 variable "application_vcn_dns_label" {
-  description = "Application VCN DNS Label"
+  description = "Spoke Application VCN DNS Label"
   default     = "application"
 }
 
 variable "application_vcn_display_name" {
-  description = "Application VCN Display Name"
-  default     = "application-vcn"
+  description = "Spoke Application VCN Display Name"
+  default     = "spoke-application-vcn"
 }
 
-variable "application_compute_subnet_id" {
+variable "application_compute_subnetA_id" {
   default = ""
 }
 
-variable "application_compute_subnet_cidr_block" {
+variable "application_compute_subnetA_cidr_block" {
   description = "Application VCN Private Subnet"
-  default     = "172.16.0.0/28"
+  default     = "10.20.1.0/24"
 }
 
-variable "application_compute_subnet_display_name" {
+variable "application_compute_subnetA_display_name" {
   description = "Application VCN Private Subnet Display Name"
-  default     = "application-compute-subnet"
+  default     = "application-compute-subnetA"
 }
 
-variable "application_compute_subnet_dns_label" {
+variable "application_compute_subnetA_dns_label" {
   description = "Application VCN DNS Label"
-  default     = "application"
+  default     = "applicationA"
+}
+
+variable "application_compute_subnetB_id" {
+  default = ""
+}
+
+variable "application_compute_subnetB_cidr_block" {
+  description = "Application VCN Private SubnetA"
+  default     = "10.20.2.0/24"
+}
+
+variable "application_compute_subnetB_display_name" {
+  description = "Application VCN Private Subnet Display Name"
+  default     = "application-compute-subnetB"
+}
+
+variable "application_compute_subnetB_dns_label" {
+  description = "Application VCN DNS Label"
+  default     = "applicationB"
 }
 
 ############################

@@ -9,4 +9,4 @@ availability_domain_number = "1"
 ssh_public_key = "ssh-rsa AAA...H"
 
 ### 
-prisma_sdwan_custom_image_ocid = "ocid1.image."
+oci_network_firewall_custom_image_ocid = "ocid1.image."
