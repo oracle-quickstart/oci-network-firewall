@@ -1,6 +1,6 @@
 resource "oci_core_network_security_group" "nsg" {
   compartment_id = var.network_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
   display_name = var.nsg_display_name
 }
 

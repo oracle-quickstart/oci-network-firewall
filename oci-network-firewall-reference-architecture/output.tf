@@ -1,8 +1,8 @@
-output "prisma_sdwan_ion_instance_public_ip" {
+output "oci_network_firewall_ion_instance_public_ip" {
   value = [oci_core_instance.prisma-sdwan-vm[0].*.public_ip]
 }
 
-output "prisma_sdwan_ion_instance_private_ip" {
+output "oci_network_firewall_ion_instance_private_ip" {
   value = [oci_core_instance.prisma-sdwan-vm[0].*.private_ip]
 }
 

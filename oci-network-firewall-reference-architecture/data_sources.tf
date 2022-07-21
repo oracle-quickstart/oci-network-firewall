@@ -58,11 +58,11 @@ data "oci_core_vnic_attachments" "untrust_attachments" {
 
   filter {
     name   = "subnet_id"
-    values = [local.use_existing_network ? var.prisma_sdwan_public_subnet_id : oci_core_subnet.prisma_sdwan_public_subnet[0].id]
+    values = [local.use_existing_network ? var.oci_network_firewall_public_subnet_id : oci_core_subnet.oci_network_firewall_public_subnet[0].id]
   }
 
   depends_on = [
-    oci_core_vnic_attachment.prisma_sdwan_public_vnic_attachment
+    oci_core_vnic_attachment.oci_network_firewall_public_vnic_attachment
   ]
 }
 
@@ -73,51 +73,51 @@ data "oci_core_vnic_attachments" "trust_attachments" {
 
   filter {
     name   = "subnet_id"
-    values = [local.use_existing_network ? var.prisma_sdwan_core_subnet_id : oci_core_subnet.prisma_sdwan_core_subnet[0].id]
+    values = [local.use_existing_network ? var.oci_network_firewall_core_subnet_id : oci_core_subnet.oci_network_firewall_core_subnet[0].id]
   }
 
   depends_on = [
-    oci_core_vnic_attachment.prisma_sdwan_core_vnic_attachment,
+    oci_core_vnic_attachment.oci_network_firewall_core_vnic_attachment,
   ]
 }
 
 # ------ Get the Allow All Security Lists for Subnets in Firewall VCN
-data "oci_core_security_lists" "allow_all_security_prisma_sdwan_controller" {
+data "oci_core_security_lists" "allow_all_security_oci_network_firewall_controller" {
   compartment_id = var.compute_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
   filter {
     name   = "display_name"
     values = ["prisma-sdwan-controller-sl"]
   }
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_controller_security,
+    oci_core_security_list.allow_oci_network_firewall_controller_security,
   ]
 }
 
 
 # ------ Get the Allow All Security Lists for Subnets in Firewall VCN
-data "oci_core_security_lists" "allow_all_security_prisma_sdwan_core" {
+data "oci_core_security_lists" "allow_all_security_oci_network_firewall_core" {
   compartment_id = var.compute_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
   filter {
     name   = "display_name"
     values = ["prisma-sdwan-core-sl"]
   }
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_core_security,
+    oci_core_security_list.allow_oci_network_firewall_core_security,
   ]
 }
 
 # ------ Get the Allow All Security Lists for Subnets in Firewall VCN
-data "oci_core_security_lists" "allow_all_security_prisma_sdwan_public" {
+data "oci_core_security_lists" "allow_all_security_oci_network_firewall_public" {
   compartment_id = var.compute_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
   filter {
     name   = "display_name"
     values = ["prisma-sdwan-public-sl"]
   }
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_public_security,
+    oci_core_security_list.allow_oci_network_firewall_public_security,
   ]
 }
 
@@ -135,22 +135,22 @@ data "oci_core_security_lists" "allow_all_security_application" {
 }
 
 # ------ Get the Private IPs using Untrust Subnet
-data "oci_core_private_ips" "prisma_sdwan_public_subnet_public_ips" {
-  subnet_id = oci_core_subnet.prisma_sdwan_public_subnet.0.id
+data "oci_core_private_ips" "oci_network_firewall_public_subnet_public_ips" {
+  subnet_id = oci_core_subnet.oci_network_firewall_public_subnet.0.id
 
   depends_on = [
-    oci_core_vnic_attachment.prisma_sdwan_public_vnic_attachment,
+    oci_core_vnic_attachment.oci_network_firewall_public_vnic_attachment,
   ]
 }
 
 # ------ Get the Private IPs using Trust Subnet
-data "oci_core_private_ips" "prisma_sdwan_core_subnet_private_ips" {
-  subnet_id = oci_core_subnet.prisma_sdwan_core_subnet[0].id
+data "oci_core_private_ips" "oci_network_firewall_core_subnet_private_ips" {
+  subnet_id = oci_core_subnet.oci_network_firewall_core_subnet[0].id
   filter {
     name   = "display_name"
     values = ["prisma-sdwan-vion-vnic3"]
   }
   depends_on = [
-    oci_core_vnic_attachment.prisma_sdwan_core_vnic_attachment,
+    oci_core_vnic_attachment.oci_network_firewall_core_vnic_attachment,
   ]
 }

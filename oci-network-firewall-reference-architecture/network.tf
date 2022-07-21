@@ -1,50 +1,41 @@
-# ------ Create Prisma SDWAN VCN
-resource "oci_core_vcn" "prisma_sdwan" {
+# ------ Create OCI Network Firewall VCN
+resource "oci_core_vcn" "oci_network_firewall" {
   count          = local.use_existing_network ? 0 : 1
-  cidr_block     = var.prisma_sdwan_vcn_cidr_block
-  dns_label      = var.prisma_sdwan_vcn_dns_label
+  cidr_block     = var.oci_network_firewall_vcn_cidr_block
+  dns_label      = var.oci_network_firewall_vcn_dns_label
   compartment_id = var.network_compartment_ocid
-  display_name   = var.prisma_sdwan_vcn_display_name
+  display_name   = var.oci_network_firewall_vcn_display_name
 }
 
 # ------ Create IGW
 resource "oci_core_internet_gateway" "igw" {
   count          = local.use_existing_network ? 0 : 1
   compartment_id = var.network_compartment_ocid
-  display_name   = "prisma-sdwan-igw"
-  vcn_id         = oci_core_vcn.prisma_sdwan[count.index].id
-  enabled        = "true"
-}
-
-# ------ Create IGW
-resource "oci_core_internet_gateway" "igw-application" {
-  count          = local.use_existing_network ? 0 : 1
-  compartment_id = var.network_compartment_ocid
-  display_name   = "prisma-sdwan-igw"
-  vcn_id         = oci_core_vcn.application[count.index].id
+  display_name   = "igw"
+  vcn_id         = oci_core_vcn.oci_network_firewall[count.index].id
   enabled        = "true"
 }
 
 # ------ Create DRG
 resource "oci_core_drg" "drg" {
   compartment_id = var.network_compartment_ocid
-  display_name   = "${var.prisma_sdwan_vcn_display_name}-drg"
+  display_name   = "${var.oci_network_firewall_vcn_display_name}-drg"
 }
 
 # ------ Attach DRG to Hub VCN
 resource "oci_core_drg_attachment" "hub_drg_attachment" {
   drg_id             = oci_core_drg.drg.id
-  display_name       = "prisma–sdwan-transit"
+  display_name       = "oci-network-firewall-transit"
   drg_route_table_id = oci_core_drg_route_table.from_firewall_route_table.id
 
   network_details {
-    id   = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
+    id   = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
     type = "VCN"
     route_table_id = oci_core_route_table.vcn_ingress_route_table.0.id
   }
 }
 
-# ------ Attach DRG to Web Spoke VCN
+# ------ Attach DRG to Web Application Spoke VCN
 resource "oci_core_drg_attachment" "web_drg_attachment" {
   drg_id             = oci_core_drg.drg.id
   vcn_id             = local.use_existing_network ? var.application_vcn_id : oci_core_vcn.application.0.id
@@ -52,18 +43,17 @@ resource "oci_core_drg_attachment" "web_drg_attachment" {
   drg_route_table_id = oci_core_drg_route_table.to_firewall_route_table.id
 }
 
-
 # ------ DRG From Firewall Route Table
 resource "oci_core_drg_route_table" "from_firewall_route_table" {
   drg_id                           = oci_core_drg.drg.id
-  display_name                     = "From-SDWAN"
+  display_name                     = "From-Firewall"
   import_drg_route_distribution_id = oci_core_drg_route_distribution.firewall_drg_route_distribution.id
 }
 
 # ------ DRG to Firewall Route Table
 resource "oci_core_drg_route_table" "to_firewall_route_table" {
   drg_id       = oci_core_drg.drg.id
-  display_name = "To-SDWAN"
+  display_name = "To-Firewall"
 }
 
 # ------ Add DRG To Firewall Route Table Entry
@@ -92,10 +82,10 @@ resource "oci_core_drg_route_distribution_statement" "firewall_drg_route_distrib
   priority = "1"
 }
 
-# ------ Default Routing Table for Hub VCN 
+# ------ Default Routing Table for Firewall VCN 
 resource "oci_core_default_route_table" "default_route_table" {
   count                      = local.use_existing_network ? 0 : 1
-  manage_default_resource_id = oci_core_vcn.prisma_sdwan[count.index].default_route_table_id
+  manage_default_resource_id = oci_core_vcn.oci_network_firewall[count.index].default_route_table_id
   display_name               = "DefaultRouteTable"
 
   route_rules {
@@ -107,11 +97,11 @@ resource "oci_core_default_route_table" "default_route_table" {
 }
 
 # ------ Default Routing Table for Hub VCN 
-resource "oci_core_route_table" "prisma_sdwan_controller_route_table" {
+resource "oci_core_route_table" "oci_network_firewall_route_table" {
   count          = local.use_existing_network ? 0 : 1
   compartment_id = var.network_compartment_ocid
-  vcn_id         = oci_core_vcn.prisma_sdwan[count.index].id
-  display_name   = "prisma-sdwan-crtl-public-rt"
+  vcn_id         = oci_core_vcn.oci_network_firewall[count.index].id
+  display_name   = "oci-network-firewall-public-rt"
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -120,18 +110,17 @@ resource "oci_core_route_table" "prisma_sdwan_controller_route_table" {
   }
 }
 
-# ------ Create LPG Hub Route Table
+# ------ Create Firewall VCN Ingress Route Table
 resource "oci_core_route_table" "vcn_ingress_route_table" {
   count          = local.use_existing_network ? 0 : 1
   compartment_id = var.network_compartment_ocid
-  vcn_id         = oci_core_vcn.prisma_sdwan[count.index].id
+  vcn_id         = oci_core_vcn.oci_network_firewall[count.index].id
   display_name   = "VCN-INGRESS"
 
   route_rules {
-    # destination       = "0.0.0.0/0"
-    destination       = var.branch_sdwan_supernet
+    destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = data.oci_core_private_ips.prisma_sdwan_core_subnet_private_ips.private_ips[0].id
+    network_entity_id = data.oci_core_private_ips.oci_network_firewall_core_subnet_private_ips.private_ips[0].id
   }
 
 }
@@ -145,76 +134,76 @@ data "oci_core_services" "all_services" {
   }
 }
 
-# ------ Get Hub Service Gateway from Gateways (Hub VCN)
+# ------ Get Hub Service Gateway from Gateways (Firewall VCN)
 data "oci_core_service_gateways" "hub_service_gateways" {
   count          = local.use_existing_network ? 0 : 1
   compartment_id = var.network_compartment_ocid
   state          = "AVAILABLE"
-  vcn_id         = oci_core_vcn.prisma_sdwan[count.index].id
+  vcn_id         = oci_core_vcn.oci_network_firewall[count.index].id
 }
 
-# ------ Create Hub VCN Public subnet
-resource "oci_core_subnet" "prisma_sdwan_public_subnet" {
+# ------ Create Firewal VCN Public subnet
+resource "oci_core_subnet" "oci_network_firewall_public_subnet" {
   count                      = local.use_existing_network ? 0 : 1
   compartment_id             = var.network_compartment_ocid
-  vcn_id                     = oci_core_vcn.prisma_sdwan[count.index].id
-  cidr_block                 = var.prisma_sdwan_public_subnet_cidr_block
-  display_name               = var.prisma_sdwan_public_subnet_display_name
-  route_table_id             = oci_core_route_table.prisma_sdwan_controller_route_table[count.index].id
-  dns_label                  = var.prisma_sdwan_public_subnet_dns_label
-  security_list_ids          = [data.oci_core_security_lists.allow_all_security_prisma_sdwan_public.security_lists[0].id]
+  vcn_id                     = oci_core_vcn.oci_network_firewall[count.index].id
+  cidr_block                 = var.oci_network_firewall_public_subnet_cidr_block
+  display_name               = var.oci_network_firewall_public_subnet_display_name
+  route_table_id             = oci_core_route_table.oci_network_firewall_controller_route_table[count.index].id
+  dns_label                  = var.oci_network_firewall_public_subnet_dns_label
+  security_list_ids          = [data.oci_core_security_lists.allow_all_security_oci_network_firewall_public.security_lists[0].id]
   prohibit_public_ip_on_vnic = "false"
 
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_public_security,
+    oci_core_security_list.allow_oci_network_firewall_public_security,
   ]
 }
 
 # ------ Create Hub VCN Trust subnet
-resource "oci_core_subnet" "prisma_sdwan_core_subnet" {
+resource "oci_core_subnet" "oci_network_firewall_core_subnet" {
   count                      = local.use_existing_network ? 0 : 1
   compartment_id             = var.network_compartment_ocid
-  vcn_id                     = oci_core_vcn.prisma_sdwan[count.index].id
-  cidr_block                 = var.prisma_sdwan_core_subnet_cidr_block
-  display_name               = var.prisma_sdwan_core_subnet_display_name
-  dns_label                  = var.prisma_sdwan_core_subnet_dns_label
-  security_list_ids          = [data.oci_core_security_lists.allow_all_security_prisma_sdwan_core.security_lists[0].id]
+  vcn_id                     = oci_core_vcn.oci_network_firewall[count.index].id
+  cidr_block                 = var.oci_network_firewall_core_subnet_cidr_block
+  display_name               = var.oci_network_firewall_core_subnet_display_name
+  dns_label                  = var.oci_network_firewall_core_subnet_dns_label
+  security_list_ids          = [data.oci_core_security_lists.allow_all_security_oci_network_firewall_core.security_lists[0].id]
   prohibit_public_ip_on_vnic = "true"
 
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_core_security,
+    oci_core_security_list.allow_oci_network_firewall_core_security,
   ]
 }
 
 # ------ Update Route Table for Trust Subnet
-resource "oci_core_route_table_attachment" "update_prisma_sdwan_core_route_table" {
+resource "oci_core_route_table_attachment" "update_oci_network_firewall_core_route_table" {
   count          = local.use_existing_network ? 0 : 1
-  subnet_id      = local.use_existing_network ? var.prisma_sdwan_core_subnet_id : oci_core_subnet.prisma_sdwan_core_subnet[0].id
-  route_table_id = oci_core_route_table.prisma_sdwan_core_route_table[count.index].id
+  subnet_id      = local.use_existing_network ? var.oci_network_firewall_core_subnet_id : oci_core_subnet.oci_network_firewall_core_subnet[0].id
+  route_table_id = oci_core_route_table.oci_network_firewall_core_route_table[count.index].id
 }
 
 # ------ Create Hub VCN PAN Internet subnet
-resource "oci_core_subnet" "prisma_sdwan_controller_subnet" {
+resource "oci_core_subnet" "oci_network_firewall_controller_subnet" {
   count                      = local.use_existing_network ? 0 : 1
   compartment_id             = var.network_compartment_ocid
-  vcn_id                     = oci_core_vcn.prisma_sdwan[count.index].id
-  cidr_block                 = var.prisma_sdwan_controller_subnet_cidr_block
-  display_name               = var.prisma_sdwan_controller_subnet_display_name
-  route_table_id             = oci_core_route_table.prisma_sdwan_controller_route_table[count.index].id
-  dns_label                  = var.prisma_sdwan_controller_subnet_dns_label
-  security_list_ids          = [data.oci_core_security_lists.allow_all_security_prisma_sdwan_controller.security_lists[0].id]
+  vcn_id                     = oci_core_vcn.oci_network_firewall[count.index].id
+  cidr_block                 = var.oci_network_firewall_controller_subnet_cidr_block
+  display_name               = var.oci_network_firewall_controller_subnet_display_name
+  route_table_id             = oci_core_route_table.oci_network_firewall_controller_route_table[count.index].id
+  dns_label                  = var.oci_network_firewall_controller_subnet_dns_label
+  security_list_ids          = [data.oci_core_security_lists.allow_all_security_oci_network_firewall_controller.security_lists[0].id]
   prohibit_public_ip_on_vnic = "false"
 
   depends_on = [
-    oci_core_security_list.allow_prisma_sdwan_controller_security,
+    oci_core_security_list.allow_oci_network_firewall_controller_security,
   ]
 }
 
 # ------ Create route table for backend to point to backend cluster ip (Hub VCN)
-resource "oci_core_route_table" "prisma_sdwan_core_route_table" {
+resource "oci_core_route_table" "oci_network_firewall_core_route_table" {
   count          = local.use_existing_network ? 0 : 1
   compartment_id = var.network_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan[0].id
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall[0].id
   display_name   = "prisma-sdwan-core-rt"
 
   route_rules {
@@ -226,10 +215,10 @@ resource "oci_core_route_table" "prisma_sdwan_core_route_table" {
 }
 
 # ------ Add Trust route table to Trust subnet (Hub VCN)
-resource "oci_core_route_table_attachment" "prisma_sdwan_core_route_table_attachment" {
+resource "oci_core_route_table_attachment" "oci_network_firewall_core_route_table_attachment" {
   count          = local.use_existing_network ? 0 : 1
-  subnet_id      = local.use_existing_network ? var.prisma_sdwan_core_subnet_id : oci_core_subnet.prisma_sdwan_core_subnet[0].id
-  route_table_id = oci_core_route_table.prisma_sdwan_core_route_table[count.index].id
+  subnet_id      = local.use_existing_network ? var.oci_network_firewall_core_subnet_id : oci_core_subnet.oci_network_firewall_core_subnet[0].id
+  route_table_id = oci_core_route_table.oci_network_firewall_core_route_table[count.index].id
 }
 
 # ------ Create Web VCN
@@ -247,12 +236,6 @@ resource "oci_core_default_route_table" "application_default_route_table" {
   manage_default_resource_id = oci_core_vcn.application[count.index].default_route_table_id
 
   route_rules {
-    network_entity_id = oci_core_internet_gateway.igw-application[count.index].id
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-  }
-
-  route_rules {
     network_entity_id = oci_core_drg.drg.id
     destination       = "172.16.255.0/24"
     destination_type  = "CIDR_BLOCK"
@@ -267,13 +250,13 @@ resource "oci_core_default_route_table" "application_default_route_table" {
 }
 
 # ------ Add Web Private Subnet to Web VCN
-resource "oci_core_subnet" "application_compute_subnet" {
+resource "oci_core_subnet" "application_compute_subnetA" {
   count                      = local.use_existing_network ? 0 : 1
-  cidr_block                 = var.application_compute_subnet_cidr_block
+  cidr_block                 = var.application_compute_subnetA_cidr_block
   compartment_id             = var.network_compartment_ocid
   vcn_id                     = oci_core_vcn.application[count.index].id
-  display_name               = var.application_compute_subnet_display_name
-  dns_label                  = var.application_compute_subnet_dns_label
+  display_name               = var.application_compute_subnetA_display_name
+  dns_label                  = var.application_compute_subnetA_dns_label
   prohibit_public_ip_on_vnic = true
   security_list_ids          = [data.oci_core_security_lists.allow_all_security_application.security_lists[0].id]
 
@@ -282,12 +265,27 @@ resource "oci_core_subnet" "application_compute_subnet" {
   ]
 }
 
+# ------ Add Web Private Subnet to Web VCN
+resource "oci_core_subnet" "application_compute_subnetB" {
+  count                      = local.use_existing_network ? 0 : 1
+  cidr_block                 = var.application_compute_subnetB_cidr_block
+  compartment_id             = var.network_compartment_ocid
+  vcn_id                     = oci_core_vcn.application[count.index].id
+  display_name               = var.application_compute_subnetB_display_name
+  dns_label                  = var.application_compute_subnetB_dns_label
+  prohibit_public_ip_on_vnic = true
+  security_list_ids          = [data.oci_core_security_lists.allow_all_security_application.security_lists[0].id]
+
+  depends_on = [
+    oci_core_security_list.allow_all_security_application,
+  ]
+}
 
 # ------ Update Default Security List to All All  Rules
-resource "oci_core_security_list" "allow_prisma_sdwan_controller_security" {
+resource "oci_core_security_list" "allow_oci_network_firewall_public_security" {
   compartment_id = var.network_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
-  display_name   = "prisma-sdwan-controller-sl"
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
+  display_name   = "firewall-vcn-public-sl"
   ingress_security_rules {
     protocol = "all"
     source   = "0.0.0.0/0"
@@ -300,26 +298,10 @@ resource "oci_core_security_list" "allow_prisma_sdwan_controller_security" {
 }
 
 # ------ Update Default Security List to All All  Rules
-resource "oci_core_security_list" "allow_prisma_sdwan_public_security" {
+resource "oci_core_security_list" "allow_oci_network_firewall_core_security" {
   compartment_id = var.network_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
-  display_name   = "prisma-sdwan-public-sl"
-  ingress_security_rules {
-    protocol = "all"
-    source   = "0.0.0.0/0"
-  }
-
-  egress_security_rules {
-    protocol    = "all"
-    destination = "0.0.0.0/0"
-  }
-}
-
-# ------ Update Default Security List to All All  Rules
-resource "oci_core_security_list" "allow_prisma_sdwan_core_security" {
-  compartment_id = var.network_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.prisma_sdwan_vcn_id : oci_core_vcn.prisma_sdwan.0.id
-  display_name   = "prisma-sdwan-core-sl"
+  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
+  display_name   = "firewall-vcn-core-sl"
   ingress_security_rules {
     protocol = "all"
     source   = "0.0.0.0/0"

@@ -16,7 +16,7 @@ resource "oci_core_instance" "prisma-sdwan-vm" {
   }
 
   create_vnic_details {
-    subnet_id              = local.use_existing_network ? var.prisma_sdwan_controller_subnet_id : oci_core_subnet.prisma_sdwan_controller_subnet[0].id
+    subnet_id              = local.use_existing_network ? var.oci_network_firewall_controller_subnet_id : oci_core_subnet.oci_network_firewall_controller_subnet[0].id
     # display_name           = var.vm_display_name
     assign_public_ip       = true
     nsg_ids                = [oci_core_network_security_group.nsg.id]
@@ -25,9 +25,9 @@ resource "oci_core_instance" "prisma-sdwan-vm" {
   }
 
   source_details {
-    source_type = "image"
-    source_id = var.prisma_sdwan_custom_image_ocid
-    boot_volume_size_in_gbs = 100
+    source_type             = "image"
+    source_id               = data.oci_core_images.InstanceImageOCID.images[1].id
+    boot_volume_size_in_gbs = "50"
   }
 
   launch_options {
@@ -40,10 +40,10 @@ resource "oci_core_instance" "prisma-sdwan-vm" {
 
 }
 
-resource "oci_core_vnic_attachment" "prisma_sdwan_public_vnic_attachment" {
+resource "oci_core_vnic_attachment" "oci_network_firewall_public_vnic_attachment" {
   count = 1
   create_vnic_details {
-    subnet_id              = local.use_existing_network ? var.prisma_sdwan_public_subnet_id : oci_core_subnet.prisma_sdwan_public_subnet[0].id
+    subnet_id              = local.use_existing_network ? var.oci_network_firewall_public_subnet_id : oci_core_subnet.oci_network_firewall_public_subnet[0].id
     assign_public_ip       = "true"
     skip_source_dest_check = "false"
     nsg_ids                = [oci_core_network_security_group.nsg.id]
@@ -55,10 +55,10 @@ resource "oci_core_vnic_attachment" "prisma_sdwan_public_vnic_attachment" {
   ]
 }
 
-resource "oci_core_vnic_attachment" "prisma_sdwan_core_vnic_attachment" {
+resource "oci_core_vnic_attachment" "oci_network_firewall_core_vnic_attachment" {
   count = 1
   create_vnic_details {
-    subnet_id              = local.use_existing_network ? var.prisma_sdwan_core_subnet_id : oci_core_subnet.prisma_sdwan_core_subnet[0].id
+    subnet_id              = local.use_existing_network ? var.oci_network_firewall_core_subnet_id : oci_core_subnet.oci_network_firewall_core_subnet[0].id
     assign_public_ip       = "false"
     skip_source_dest_check = "true"
     nsg_ids                = [oci_core_network_security_group.nsg.id]
@@ -66,7 +66,7 @@ resource "oci_core_vnic_attachment" "prisma_sdwan_core_vnic_attachment" {
   }
   instance_id = oci_core_instance.prisma-sdwan-vm[count.index].id
   depends_on = [
-    oci_core_vnic_attachment.prisma_sdwan_public_vnic_attachment
+    oci_core_vnic_attachment.oci_network_firewall_public_vnic_attachment
   ]
 }
 
