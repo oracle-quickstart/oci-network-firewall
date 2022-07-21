@@ -9,32 +9,13 @@ variable "tenancy_ocid" {
 variable "region" {
 }
 
-####################################
-#  Prisma SDWAN Variable Group   #
-####################################
-
-variable "oci_network_firewall_custom_image_ocid" {
-  description = "Custom Image OCID"
-  default = "test"
-}
-
-variable branch_cidr {
- description = "SDWAN Branch CIDR"
- default = "192.168.0.0/16"
-}
-
-variable branch_sdwan_supernet { 
-  description = "Branch Supernet CIDR"
-  default = "192.168.20.0/23"
-
-}
 ############################
 #  Compute Configuration   #
 ############################
 
 variable "vm_display_name" {
   description = "Instance Name"
-  default     = "Prisma-SDWAN-ION"
+  default     = "client-vm"
 }
 
 variable "vm_display_name_application" {
@@ -44,12 +25,12 @@ variable "vm_display_name_application" {
 
 variable "vm_compute_shape" {
   description = "Compute Shape"
-  default     = "VM.Standard2.8" //4 cores
+  default     = "VM.Standard2.2"
 }
 
 variable "spoke_vm_compute_shape" {
   description = "Compute Shape"
-  default     = "VM.Standard2.2" //2 cores
+  default     = "VM.Standard2.2"
 }
 
 variable "vm_flex_shape_ocpus" {
@@ -108,7 +89,7 @@ variable "oci_network_firewall_vcn_cidr_block" {
 
 variable "oci_network_firewall_vcn_dns_label" {
   description = "Firewall VCN DNS Label"
-  default     = "ocinetworkfirewall"
+  default     = "firewall"
 }
 
 variable "subnet_span" {
@@ -116,61 +97,61 @@ variable "subnet_span" {
   default     = "Regional Subnet"
 }
 
-variable "oci_network_firewall_controller_subnet_id" {
+variable "oci_network_firewall_subnet_id" {
   default = ""
 }
 
-variable "oci_network_firewall_controller_subnet_display_name" {
-  description = "Prisma SDWAN Controller Subnet Name"
-  default     = "prisma-sdwan-controller-subnet"
+variable "oci_network_firewall_subnet_display_name" {
+  description = "Firewall Subnet Name"
+  default     = "firewall-subnet"
 }
 
-variable "oci_network_firewall_controller_subnet_cidr_block" {
-  description = "Prisma SDWAN Controller Subnet CIDR"
-  default     = "172.16.255.0/28"
+variable "oci_network_firewall_subnet_cidr_block" {
+  description = "Firewall Subnet CIDR"
+  default     = "10.10.0.0/24"
 }
 
-variable "oci_network_firewall_controller_subnet_dns_label" {
-  description = "Prisma SDWAN Controller Subnet DNS Label"
-  default     = "prismacontl"
+variable "oci_network_firewall_subnet_dns_label" {
+  description = "Firewall Subnet DNS Label"
+  default     = "firewall"
 }
 
-variable "oci_network_firewall_core_subnet_id" {
+variable "client_subnet_id" {
   default = ""
 }
 
-variable "oci_network_firewall_core_subnet_display_name" {
-  description = "Prisma SDWAN Core Subnet Name"
-  default     = "prisma-sdwan-core-subnet"
+variable "client_subnet_display_name" {
+  description = "Client Subnet Name"
+  default     = "client-subnet"
 }
 
-variable "oci_network_firewall_core_subnet_cidr_block" {
-  description = "Prisma SDWAN Core Subnet CIDR"
-  default     = "172.16.255.32/28"
+variable "client_subnet_cidr_block" {
+  description = "Client Subnet CIDR"
+  default     = "10.10.1.0/24"
 }
 
-variable "oci_network_firewall_core_subnet_dns_label" {
-  description = "Prisma SDWAN Core Subnet DNS Label"
-  default     = "prismacore"
+variable "client_subnet_dns_label" {
+  description = "Client Subnet DNS Label"
+  default     = "client"
 }
 
-variable "oci_network_firewall_public_subnet_id" {
+variable "server_subnet_id" {
   default = ""
 }
 
-variable "oci_network_firewall_public_subnet_display_name" {
-  description = "Prisma SDWAN Public Subnet Name"
-  default     = "prisma-sdwan-public-subnet"
+variable "server_subnet_display_name" {
+  description = "Server Subnet Name"
+  default     = "server-subnet"
 }
 
-variable "oci_network_firewall_public_subnet_cidr_block" {
-  description = "Prisma SDWAN Public Subnet CIDR"
-  default     = "172.16.255.16/28"
+variable "server_subnet_cidr_block" {
+  description = "Server Subnet CIDR"
+  default     = "10.10.2.0/24"
 }
 
-variable "oci_network_firewall_public_subnet_dns_label" {
-  description = "Prisma SDWAN Public Subnet DNS Label"
-  default     = "prismapublic"
+variable "server_subnet_dns_label" {
+  description = "Server Subnet DNS Label"
+  default     = "server"
 }
 
 variable "application_vcn_cidr_block" {
@@ -224,6 +205,15 @@ variable "application_compute_subnetB_display_name" {
 variable "application_compute_subnetB_dns_label" {
   description = "Application VCN DNS Label"
   default     = "applicationB"
+}
+
+############################
+# Additional Configuration #
+############################
+
+variable "oci_network_firewall_policy_action" {
+  description = "Security Policy Action"
+  default     = "Allow"
 }
 
 ############################
