@@ -28,6 +28,8 @@ You can deploy this architecture using two approach explained in each section:
 
 ## Deploy Using Oracle Resource Manager
 
+**Note**: Click to deploy button effort is work in progress. Please use terraform CLI to deploy this architecture.
+
 In this section you will follow each steps given below to create this architecture:
 
 1. **Click** [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-phoenix-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-network-firewall/raw/master/asav/oci-network-firewall-reference-architecture/resource-manager/oci-network-firewall.zip)
