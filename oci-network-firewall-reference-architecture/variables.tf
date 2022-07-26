@@ -13,15 +13,15 @@ variable "region" {
 #  Compute Configuration   #
 ############################
 
-variable "vm_display_name" {
-  description = "Instance Name"
-  default     = "client-vm"
-}
+# variable "vm_display_name" {
+#   description = "Instance Name"
+#   default     = "client-vm"
+# }
 
-variable "vm_display_name_application" {
-  description = "Instance Name"
-  default     = "application-vm"
-}
+# variable "vm_display_name_application" {
+#   description = "Instance Name"
+#   default     = "application-vm"
+# }
 
 variable "vm_compute_shape" {
   description = "Compute Shape"
@@ -166,7 +166,7 @@ variable "application_vcn_dns_label" {
 
 variable "application_vcn_display_name" {
   description = "Spoke Application VCN Display Name"
-  default     = "spoke-application-vcn"
+  default     = "spoke-vcn"
 }
 
 variable "application_compute_subnetA_id" {
@@ -180,7 +180,7 @@ variable "application_compute_subnetA_cidr_block" {
 
 variable "application_compute_subnetA_display_name" {
   description = "Application VCN Private Subnet Display Name"
-  default     = "application-compute-subnetA"
+  default     = "server-subnetA"
 }
 
 variable "application_compute_subnetA_dns_label" {
@@ -199,7 +199,7 @@ variable "application_compute_subnetB_cidr_block" {
 
 variable "application_compute_subnetB_display_name" {
   description = "Application VCN Private Subnet Display Name"
-  default     = "application-compute-subnetB"
+  default     = "server-subnetB"
 }
 
 variable "application_compute_subnetB_dns_label" {
@@ -213,7 +213,12 @@ variable "application_compute_subnetB_dns_label" {
 
 variable "oci_network_firewall_policy_action" {
   description = "Security Policy Action"
-  default     = "Allow"
+  default     = "ALLOW"
+}
+
+variable "oci_network_firewall_name" {
+  description = "OCI Network Firewall Name"
+  default     = "oci-network-firewall-demo"
 }
 
 ############################
@@ -235,37 +240,17 @@ variable "nsg_whitelist_ip" {
 
 variable "nsg_display_name" {
   description = "Network Security Groups - Name"
-  default     = "cluster-security-group"
+  default     = "firewall-vcn-security-group"
 }
 
-variable "web_nsg_display_name" {
+variable "spoke_nsg_display_name" {
   description = "Network Security Groups - Web"
-  default     = "web-security-group"
-}
-
-variable "public_routetable_display_name" {
-  description = "Public route table Name"
-  default     = "UntrustRouteTable"
-}
-
-variable "private_routetable_display_name" {
-  description = "Private route table Name"
-  default     = "TrustRouteTable"
-}
-
-variable "drg_routetable_display_name" {
-  description = "DRG route table Name"
-  default     = "DRGRouteTable"
-}
-
-variable "use_existing_ip" {
-  description = "Use an existing permanent public ip"
-  default     = "Create new IP"
+  default     = "spoke-security-group"
 }
 
 variable "template_name" {
   description = "Template name. Should be defined according to deployment type"
-  default     = "prisma-sdwan"
+  default     = "oci-network-firewall"
 }
 
 variable "template_version" {

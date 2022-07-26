@@ -1,10 +1,8 @@
 # OCI Network Firewall - Reference Architecture
 
-**Note**: Automation will be updated within a day or two after service GA launch. **Automation work in progress**
+We are using combined architecture where we are using dynamic routing gateway with OCI Network Firewall running in Firewall VCN (Hub VCN). This architecture has a central component (the hub) that's connected to multiple networks around it, like a spoke. 
 
-We are using combined architecture where we are using dynamic routing gateway with OCI Network Firewall. This architecture has a central component (the hub) that's connected to multiple networks around it, like a spoke. 
-
-**Note**: You can deploy OCI Network Firewall in Distributed and/or Transit Architecture.
+**Note**: You can deploy OCI Network Firewall in Distributed and/or Transit Architecture. To learn more about architecture check the official Reference Architecture docs [here](https://docs.oracle.com/en/solutions/oci-network-firewall) 
 
 ## Architecture Diagram
 
@@ -16,23 +14,21 @@ You should complete below pre-requisites before proceeding to next section:
 - You have an active Oracle Cloud Infrastructure Account.
   - Tenancy OCID, User OCID, Compartment OCID, Private and Public Keys are setup properly.
 - Permission to `manage` the following types of resources in your Oracle Cloud Infrastructure tenancy: `vcns`, `internet-gateways`, `route-tables`, `security-lists`,`dynamic-routing-gateways`, `subnets` and `instances`.
-- Quota to create the following resources: 2 VCNS, 6 subnets, and 4 compute instance.
+- Quota to create the following resources: 2 VCNS, 5 subnets, and 4 compute instance as per architecture topology.
 
 If you don't have the required permissions and quota, contact your tenancy administrator. See [Policy Reference](https://docs.cloud.oracle.com/en-us/iaas/Content/Identity/Reference/policyreference.htm), [Service Limits](https://docs.cloud.oracle.com/en-us/iaas/Content/General/Concepts/servicelimits.htm), [Compartment Quotas](https://docs.cloud.oracle.com/iaas/Content/General/Concepts/resourcequotas.htm).
 
 ## Deployment Options
 
-You can deploy this architecture using two approach explained in each section: 
+You can deploy this architecture using two approaches explained in each section: 
 1. Using Oracle Resource Manager 
 2. Using Terraform CLI 
 
 ## Deploy Using Oracle Resource Manager
 
-**Note**: Click to deploy button effort is work in progress. Please use terraform CLI to deploy this architecture.
-
 In this section you will follow each steps given below to create this architecture:
 
-1. **Click** [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-phoenix-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-network-firewall/raw/master/asav/oci-network-firewall-reference-architecture/resource-manager/oci-network-firewall.zip)
+1. **Click** [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://console.us-phoenix-1.oraclecloud.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-network-firewall/raw/master/oci-network-firewall-reference-architecture/resource-manager/oci-network-firewall.zip)
 
     > If you aren't already signed in, when prompted, enter the tenancy and user credentials.
 
@@ -44,7 +40,7 @@ In this section you will follow each steps given below to create this architectu
 
 5. After creating the stack, click **Terraform Actions**, and select **Plan** from the stack on OCI console UI.
 
-6. Wait for the job to be completed, and review the plan.
+6. Wait for the job to be completed and review the plan.
 
     > To make any changes, return to the Stack Details page, click **Edit Stack**, and make the required changes. Then, run the **Plan** action again.
 
@@ -57,7 +53,6 @@ In this section you will follow each steps given below to create this architectu
 ## Deploy Using the Terraform CLI
 
 In this section you will use **Terraform** locally to create this architecture: 
-
 
 1. Create a local copy of this repo using below command on your terminal: 
 
@@ -74,10 +69,10 @@ In this section you will use **Terraform** locally to create this architecture:
     terraform -v
 
     Terraform v0.13.0
-    + provider.oci v4.14.0
+    + provider.oci v4.85.0
     ```
 
-3. Create a `terraform.tfvars` file in your **drg-use-case** directory, and specify the following variables:
+3. Create a `terraform.tfvars` file in your **oci-network-firewall-reference-architecture** directory, and specify the following variables:
 
     ```
     # Authentication
@@ -117,7 +112,9 @@ In this section you will use **Terraform** locally to create this architecture:
 
 ## Configuration
 
-You can follow the official [page](https://www.oracle.com/security/cloud-security/network-firewall/) to know more about OCI Network Firewall and Configuration. 
+You can follow the official page to know more about [OCI Network Firewall and Configuration](https://docs.oracle.com/en-us/iaas/Content/network-firewall/overview.htm). 
+
+**Note:**: You can enhance this automation to meet your use-case requirements. We have created a new environment to validate this architecture and automation. 
 
 ## Feedback 
 

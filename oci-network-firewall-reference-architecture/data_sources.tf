@@ -58,23 +58,10 @@ data "oci_core_security_lists" "allow_all_security_oci_network_firewall_core" {
   vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
   filter {
     name   = "display_name"
-    values = ["prisma-sdwan-core-sl"]
+    values = ["AllowAll"]
   }
   depends_on = [
     oci_core_security_list.allow_oci_network_firewall_core_security,
-  ]
-}
-
-# ------ Get the Allow All Security Lists for Subnets in Firewall VCN
-data "oci_core_security_lists" "allow_all_security_oci_network_firewall_public" {
-  compartment_id = var.compute_compartment_ocid
-  vcn_id         = local.use_existing_network ? var.oci_network_firewall_vcn_id : oci_core_vcn.oci_network_firewall.0.id
-  filter {
-    name   = "display_name"
-    values = ["prisma-sdwan-public-sl"]
-  }
-  depends_on = [
-    oci_core_security_list.allow_oci_network_firewall_public_security,
   ]
 }
 
@@ -88,5 +75,24 @@ data "oci_core_security_lists" "allow_all_security_application" {
   }
   depends_on = [
     oci_core_security_list.allow_all_security_application,
+  ]
+}
+
+# ------ Get the OCI Network Firewall Details
+data "oci_network_firewall_network_firewall" "oci_network_firewall" {
+    network_firewall_id = oci_network_firewall_network_firewall.network_firewall[0].id
+}
+
+# ------ Get the Private IPs using Trust Subnet
+data "oci_core_private_ips" "firewall_subnet_private_ip" {
+  subnet_id = oci_core_subnet.oci_network_firewall_subnet[0].id
+
+  filter {
+    name   = "display_name"
+    values = ["oci-network-firewall-demo"]
+  }
+
+  depends_on = [
+    oci_network_firewall_network_firewall.network_firewall
   ]
 }
