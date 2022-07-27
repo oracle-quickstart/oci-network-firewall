@@ -114,7 +114,7 @@ In this section you will use **Terraform** locally to create this architecture:
 
 You can follow the official page to know more about [OCI Network Firewall and Configuration](https://docs.oracle.com/en-us/iaas/Content/network-firewall/overview.htm). 
 
-**Note:** You can enhance this automation to meet your use-case requirements. We have created a new environment to validate this architecture and automation. 
+**Note:** You can enhance this automation to meet your use-case requirements. We have created a new environment to validate this architecture and automation. Check out OCI Terraform [Examples here](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/network_firewall_network_firewall#example-usage).
 
 ## Feedback 
 
