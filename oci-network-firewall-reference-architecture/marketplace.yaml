@@ -13,9 +13,9 @@ version: "20220725"
 # Also used to link to Listing Usage section for "View Instructions".
 # (Optional) If it is missing, Application Information uses the
 # "marketplace-listing-id" tag for the same purpose.
-source:
-  type: marketplace
-  reference: 71285857
+# source:
+#   type: marketplace
+#   reference: 71285857
 
 locale: "en"
 variableGroups:

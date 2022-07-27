@@ -105,6 +105,12 @@ resource "oci_core_route_table" "vcn_ingress_route_table" {
   display_name   = "FirewallVCNIngressRouteTable"
 
   route_rules {
+    destination       = "10.10.0.0/16"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = data.oci_core_private_ips.firewall_subnet_private_ip.private_ips[0].id
+  }
+
+  route_rules {
     destination       = "10.20.0.0/16"
     destination_type  = "CIDR_BLOCK"
     network_entity_id = data.oci_core_private_ips.firewall_subnet_private_ip.private_ips[0].id
