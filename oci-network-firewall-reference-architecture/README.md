@@ -2,7 +2,7 @@
 
 We are using combined architecture where we are using dynamic routing gateway with OCI Network Firewall running in Firewall VCN (Hub VCN). This architecture has a central component (the hub) that's connected to multiple networks around it, like a spoke. 
 
-**Note**: You can deploy OCI Network Firewall in Distributed and/or Transit Architecture. To learn more about architecture check the official Reference Architecture docs [here](https://docs.oracle.com/en/solutions/oci-network-firewall) 
+**Note**: You can deploy OCI Network Firewall in Distributed and/or Transit Architecture. To learn more about architecture check the official Reference Architecture docs [here](https://docs.oracle.com/en/solutions/oci-network-firewall). Deployment of **OCI Network Firewall** takes some time so consider that.
 
 ## Architecture Diagram
 
@@ -62,7 +62,7 @@ In this section you will use **Terraform** locally to create this architecture:
     ls
     ```
 
-2. Complete the prerequisites described [here] which are associated to install **Terraform** locally:(https://github.com/oracle-quickstart/oci-prerequisites#install-terraform).
+2. Complete the prerequisites described [here] which are associated to install **Terraform** [locally](https://github.com/oracle-quickstart/oci-prerequisites#install-terraform).
     Make sure you have terraform v0.13+ cli installed and accessible from your terminal.
 
     ```bash
@@ -114,7 +114,7 @@ In this section you will use **Terraform** locally to create this architecture:
 
 You can follow the official page to know more about [OCI Network Firewall and Configuration](https://docs.oracle.com/en-us/iaas/Content/network-firewall/overview.htm). 
 
-**Note:**: You can enhance this automation to meet your use-case requirements. We have created a new environment to validate this architecture and automation. 
+**Note:** You can enhance this automation to meet your use-case requirements. We have created a new environment to validate this architecture and automation. 
 
 ## Feedback 
 
