@@ -1,5 +1,5 @@
 # Title shown in Application Information tab.
-title: OCI Network Firewall Service Deployment - Reference Architecture
+title: OCI Network Firewall Service Deployment - Reference Architecture (LiveLabs)
 # Sub Title shown in Application Information tab.
 description: This terraform code deploys OCI Network Firewall with Intra-VCN Routing Capabilities
 schemaVersion: 1.1.0
@@ -140,7 +140,7 @@ variables:
 
   vm_compute_shape:
     type: oci:core:instanceshape:name
-    default: VM.Standard2.4
+    default: VM.Standard.E4.Flex
     title: Firewall VCN Compute Shape
     required: true
     dependsOn:
@@ -148,10 +148,10 @@ variables:
 
   spoke_vm_compute_shape:
     type: oci:core:instanceshape:name
-    default: VM.Standard2.2
+    default: VM.Standard.E4.Flex
     title: Spoke Compute Shape
     required: true
-    description: Compute Shape of Web/Db Tier VMs
+    description: Compute Shape of Spoke VMs
     dependsOn:
       compartmentId: compartment_ocid
 
@@ -160,11 +160,12 @@ variables:
       eq:
         - vm_compute_shape
         - "VM.Standard.E3.Flex"
+        - "VM.Standard.E4.Flex"
     type: integer
-    default: 4
+    default: 1
     title: Flex Shape OCPUs
-    minimum: 4
-    maximum: 64
+    minimum: 1
+    maximum: 4
     required: false
 
   spoke_vm_flex_shape_ocpus:
@@ -172,6 +173,7 @@ variables:
       eq:
         - spoke_vm_compute_shape
         - "VM.Standard.E3.Flex"
+        - "VM.Standard.E4.Flex"
     type: integer
     default: 1
     title: Flex Shape OCPUs
@@ -472,7 +474,7 @@ variables:
         - "Create New VCN and Subnet"
     type: string
     required: true
-    default: applicationA
+    default: SubnetA
     title: Server SubnetA DNS Label
     description: Server SubnetA DNS Label. Only letters and numbers, starting with a letter. 15 characters max.
 
@@ -520,7 +522,7 @@ variables:
         - "Create New VCN and Subnet"
     type: string
     required: true
-    default: applicationB
+    default: ServerB
     title: Server SubnetB Subnet DNS Label
     description: Server SubnetB Subnet DNS Label. Only letters and numbers, starting with a letter. 15 characters max.
 
@@ -542,7 +544,7 @@ variables:
         - "Create New VCN and Subnet"
     type: string
     required: true
-    default: application
+    default: spoke
     title: Spoke VCN DNS Label
     description: VCN DNS Label. Only letters and numbers, starting with a letter. 15 characters max.
 

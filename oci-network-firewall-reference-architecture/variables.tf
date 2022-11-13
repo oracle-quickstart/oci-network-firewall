@@ -25,22 +25,22 @@ variable "region" {
 
 variable "vm_compute_shape" {
   description = "Compute Shape"
-  default     = "VM.Standard2.2"
+  default     = "VM.Standard.E4.Flex"
 }
 
 variable "spoke_vm_compute_shape" {
   description = "Compute Shape"
-  default     = "VM.Standard2.2"
+  default     = "VM.Standard.E4.Flex"
 }
 
 variable "vm_flex_shape_ocpus" {
   description = "Flex Shape OCPUs"
-  default     = 4
+  default     = 1
 }
 
 variable "spoke_vm_flex_shape_ocpus" {
   description = "Spoke VMs Flex Shape OCPUs"
-  default     = 4
+  default     = 1
 }
 variable "availability_domain_name" {
   default     = ""
@@ -161,7 +161,7 @@ variable "application_vcn_cidr_block" {
 
 variable "application_vcn_dns_label" {
   description = "Spoke Application VCN DNS Label"
-  default     = "application"
+  default     = "spoke"
 }
 
 variable "application_vcn_display_name" {
@@ -174,18 +174,18 @@ variable "application_compute_subnetA_id" {
 }
 
 variable "application_compute_subnetA_cidr_block" {
-  description = "Application VCN Private Subnet"
+  description = "ServerA Subnet CIDR Block"
   default     = "10.20.1.0/24"
 }
 
 variable "application_compute_subnetA_display_name" {
-  description = "Application VCN Private Subnet Display Name"
-  default     = "server-subnetA"
+  description = "ServerA Subnet Display Name"
+  default     = "serverA-subnet"
 }
 
 variable "application_compute_subnetA_dns_label" {
-  description = "Application VCN DNS Label"
-  default     = "applicationA"
+  description = "ServerA Subnet DNS Label"
+  default     = "serverA"
 }
 
 variable "application_compute_subnetB_id" {
@@ -193,18 +193,18 @@ variable "application_compute_subnetB_id" {
 }
 
 variable "application_compute_subnetB_cidr_block" {
-  description = "Application VCN Private SubnetA"
+  description = "ServerB Subnet CIDR Block"
   default     = "10.20.2.0/24"
 }
 
 variable "application_compute_subnetB_display_name" {
-  description = "Application VCN Private Subnet Display Name"
-  default     = "server-subnetB"
+  description = "ServerB Subnet Display Name"
+  default     = "serverB-subnet"
 }
 
 variable "application_compute_subnetB_dns_label" {
-  description = "Application VCN DNS Label"
-  default     = "applicationB"
+  description = "ServerB Subnet DNS Label"
+  default     = "serverB"
 }
 
 ############################
@@ -244,7 +244,7 @@ variable "nsg_display_name" {
 }
 
 variable "spoke_nsg_display_name" {
-  description = "Network Security Groups - Web"
+  description = "Network Security Groups - Spoke"
   default     = "spoke-security-group"
 }
 

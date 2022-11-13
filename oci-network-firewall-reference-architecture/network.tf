@@ -16,6 +16,15 @@ resource "oci_core_internet_gateway" "igw" {
   enabled        = "true"
 }
 
+# ------ Create Spoke IGW 
+resource "oci_core_internet_gateway" "spoke_igw" {
+  count          = local.use_existing_network ? 0 : 1
+  compartment_id = var.network_compartment_ocid
+  display_name   = "spoke-igw"
+  vcn_id         = oci_core_vcn.application[count.index].id
+  enabled        = "true"
+}
+
 # ------ Create DRG
 resource "oci_core_drg" "drg" {
   compartment_id = var.network_compartment_ocid
@@ -93,6 +102,20 @@ resource "oci_core_default_route_table" "default_route_table" {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
     network_entity_id = oci_core_internet_gateway.igw[count.index].id
+  }
+
+}
+
+# ------ Default Routing Table for Spoke VCN 
+resource "oci_core_default_route_table" "default_route_table" {
+  count                      = local.use_existing_network ? 0 : 1
+  manage_default_resource_id = oci_core_vcn.application[count.index].default_route_table_id
+  display_name               = "DefaultRouteTable"
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.spoke_igw[count.index].id
   }
 
 }
@@ -292,7 +315,7 @@ resource "oci_core_subnet" "application_compute_subnetA" {
   vcn_id                     = oci_core_vcn.application[count.index].id
   display_name               = var.application_compute_subnetA_display_name
   dns_label                  = var.application_compute_subnetA_dns_label
-  prohibit_public_ip_on_vnic = true
+  prohibit_public_ip_on_vnic = false
   route_table_id             = oci_core_route_table.server_subnet_a_route_table[count.index].id
   security_list_ids          = [data.oci_core_security_lists.allow_all_security_application.security_lists[0].id]
 
