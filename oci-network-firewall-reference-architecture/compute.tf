@@ -1,7 +1,6 @@
 # ------ Create Client VM
 resource "oci_core_instance" "client-vm" {
   count = 1
-
   availability_domain = (var.availability_domain_name != "" ? var.availability_domain_name : (length(data.oci_identity_availability_domains.ads.availability_domains) == 1 ? data.oci_identity_availability_domains.ads.availability_domains[0].name : data.oci_identity_availability_domains.ads.availability_domains[count.index].name))
   compartment_id      = var.compute_compartment_ocid
   display_name        = "client-vm"
@@ -20,7 +19,7 @@ resource "oci_core_instance" "client-vm" {
     assign_public_ip       = true
     nsg_ids                = [oci_core_network_security_group.nsg.id]
     skip_source_dest_check = "true"
-    display_name           = "client-vnic"
+    display_name           = "client-vm"
   }
 
   source_details {
@@ -61,7 +60,7 @@ resource "oci_core_instance" "server-vm" {
     assign_public_ip       = false
     nsg_ids                = [oci_core_network_security_group.nsg.id]
     skip_source_dest_check = "true"
-    display_name           = "server-vnic"
+    display_name           = "server-vm"
   }
 
   source_details {
@@ -99,8 +98,8 @@ resource "oci_core_instance" "application-vm-a" {
 
   create_vnic_details {
     subnet_id              = local.use_existing_network ? var.application_compute_subnetA_id : oci_core_subnet.application_compute_subnetA[0].id
-    display_name           = "serverA-vnic"
-    assign_public_ip       = false
+    display_name           = "serverA-vm"
+    assign_public_ip       = true
     nsg_ids                = [oci_core_network_security_group.nsg_application.id]
     skip_source_dest_check = "true"
   }
@@ -140,7 +139,7 @@ resource "oci_core_instance" "application-vm-b" {
 
   create_vnic_details {
     subnet_id              = local.use_existing_network ? var.application_compute_subnetB_id : oci_core_subnet.application_compute_subnetB[0].id
-    display_name           = "serverB-vnic"
+    display_name           = "serverB-vm"
     assign_public_ip       = false
     nsg_ids                = [oci_core_network_security_group.nsg_application.id]
     skip_source_dest_check = "true"

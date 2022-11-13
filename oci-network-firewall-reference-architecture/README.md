@@ -10,13 +10,15 @@ We are using combined architecture where we are using dynamic routing gateway wi
 
 ## Prerequisites
 
-You should complete below pre-requisites before proceeding to next section:
+You should complete the below pre-requisites before proceeding to next section:
 - You have an active Oracle Cloud Infrastructure Account.
   - Tenancy OCID, User OCID, Compartment OCID, Private and Public Keys are setup properly.
 - Permission to `manage` the following types of resources in your Oracle Cloud Infrastructure tenancy: `vcns`, `internet-gateways`, `route-tables`, `security-lists`,`dynamic-routing-gateways`, `subnets` and `instances`.
 - Quota to create the following resources: 2 VCNS, 5 subnets, and 4 compute instance as per architecture topology.
 
 If you don't have the required permissions and quota, contact your tenancy administrator. See [Policy Reference](https://docs.cloud.oracle.com/en-us/iaas/Content/Identity/Reference/policyreference.htm), [Service Limits](https://docs.cloud.oracle.com/en-us/iaas/Content/General/Concepts/servicelimits.htm), [Compartment Quotas](https://docs.cloud.oracle.com/iaas/Content/General/Concepts/resourcequotas.htm).
+
+You can also follow this [Livelabs Workshop](https://apexapps.oracle.com/pls/apex/f?p=133:180:1104087547885::::wid:3499) to deploy Firewall and required configuration. 
 
 ## Deployment Options
 
