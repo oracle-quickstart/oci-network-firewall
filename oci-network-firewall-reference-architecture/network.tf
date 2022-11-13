@@ -106,20 +106,6 @@ resource "oci_core_default_route_table" "default_route_table" {
 
 }
 
-# ------ Default Routing Table for Spoke VCN 
-resource "oci_core_default_route_table" "default_route_table" {
-  count                      = local.use_existing_network ? 0 : 1
-  manage_default_resource_id = oci_core_vcn.application[count.index].default_route_table_id
-  display_name               = "DefaultRouteTable"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.spoke_igw[count.index].id
-  }
-
-}
-
 # ------ Create Firewall VCN Ingress Route Table
 resource "oci_core_route_table" "vcn_ingress_route_table" {
   count          = local.use_existing_network ? 0 : 1
@@ -303,6 +289,12 @@ resource "oci_core_default_route_table" "application_default_route_table" {
     network_entity_id = oci_core_drg.drg.id
     destination       = "10.20.0.0/16"
     destination_type  = "CIDR_BLOCK"
+  }
+
+  route_rules {
+    destination       = "0.0.0.0/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.spoke_igw[count.index].id
   }
 
 }
