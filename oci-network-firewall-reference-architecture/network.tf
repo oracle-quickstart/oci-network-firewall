@@ -153,7 +153,7 @@ resource "oci_core_subnet" "oci_network_firewall_subnet" {
   display_name               = var.oci_network_firewall_subnet_display_name
   dns_label                  = var.oci_network_firewall_subnet_dns_label
   security_list_ids          = [data.oci_core_security_lists.allow_all_security_oci_network_firewall_core.security_lists[0].id]
-  prohibit_public_ip_on_vnic = true
+  prohibit_public_ip_on_vnic = false
 
   depends_on = [
     oci_core_security_list.allow_oci_network_firewall_core_security,
