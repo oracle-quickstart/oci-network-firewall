@@ -51,7 +51,6 @@ data "oci_identity_fault_domains" "fds" {
   ]
 }
 
-
 # ------ Get the Allow All Security Lists for Subnets in Firewall VCN
 data "oci_core_security_lists" "allow_all_security_oci_network_firewall_core" {
   compartment_id = var.compute_compartment_ocid
