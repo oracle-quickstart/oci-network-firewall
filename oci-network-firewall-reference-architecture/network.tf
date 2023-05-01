@@ -244,7 +244,7 @@ resource "oci_core_route_table" "oci_network_firewall_client_route_table" {
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.spoke_igw[count.index].id
+    network_entity_id = oci_core_internet_gateway.igw[count.index].id
   }
 }
 
@@ -354,7 +354,7 @@ resource "oci_core_route_table" "server_subnet_a_route_table" {
   route_rules {
     destination       = "0.0.0.0/0"
     destination_type  = "CIDR_BLOCK"
-    network_entity_id = oci_core_internet_gateway.igw[count.index].id
+    network_entity_id = oci_core_internet_gateway.spoke_igw[count.index].id
   }
 }
 
